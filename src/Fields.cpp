@@ -25,6 +25,7 @@ void Fields::getGridInfoPassed(Fields::vectorfields& f, Grid& grid_, Solution& s
 		f[i][j].FYP=1.0-grid_.FY[j];
 		f[i][j].visc=sol_.visc;
 		f[i][j].density=sol_.density;
+		f[i][i]
 	}
 
 	forAllInternal(f){
