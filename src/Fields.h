@@ -23,7 +23,7 @@ class Fields{
 	void copyInternalField(Fields::vectorfields&, Fields::vectorfields&);
 	//boundary conditions (1) -which modifieds the value of Fields (not matrices)
 	void inletboundaryCondition(Fields::vectorfields&, string&, double);
-	void linearextrapolateCondition(Fields::vectorfields&);
+	void linearextrapolateCondition(Fields::vectorfields&, vector<double>&, vector<double>&, string&);
 	
 	
 

@@ -6,8 +6,12 @@ int main(int argc, char **argv){
 	std::cout<<"Hello CFD"<<std::endl;
 	#include "createGridFieldsSol.h"
 
-
-	fieldsOper.print2dmat(U);
+	fieldsOper.initializeInternalFields(P,0.2);
+	fieldsOper.linearextrapolateCondition(P,mygrid_.FX,mygrid_.FY,north);
+	fieldsOper.linearextrapolateCondition(P,mygrid_.FX,mygrid_.FY,south);
+	fieldsOper.linearextrapolateCondition(P,mygrid_.FX,mygrid_.FY,east);
+	fieldsOper.linearextrapolateCondition(P,mygrid_.FX,mygrid_.FY,west);
+	fieldsOper.print2dmat(P);
 
 	//std::cout<<"mygrid dx is :"<<mygrid_.retdx()<<std::endl;
 	//for(unsigned int i=0;i<mygrid_.X.size();i++)

@@ -89,6 +89,30 @@ void Fields::inletboundaryCondition(Fields::vectorfields& vec, string& wallname,
 		}
 	}
 }
-void Fields::linearextrapolateCondition(Fields::vectorfields&){
+void Fields::linearextrapolateCondition(Fields::vectorfields& vec, vector<double>& FXvec, vector<double>& FYvec, string& wallname){
+	if(wallname=="East"){
+	   for(unsigned int j=1;j<vec[0].size()-1;j++){
+	     unsigned int i=vec[0].size()-1;
+	     vec[i][j].value=vec[i-1][j].value+(vec[i-1][j].value-vec[i-2][j].value)*FXvec[i-1];
+	   }
+	}
+	if(wallname=="West"){
+	   for(unsigned int j=1;j<vec[0].size()-1;j++){
+	     unsigned int i=0;
+	     vec[i][j].value=vec[i+1][j].value+(vec[i+1][j].value-vec[i+2][j].value)*FXvec[i+1];
+	   }
+	}
+	if(wallname=="North"){
+	   for(unsigned int i=1;i<vec[0].size()-1;i++){
+	     unsigned int j=vec[0].size()-1;
+	     vec[i][j].value=vec[i][j-1].value+(vec[i][j-1].value-vec[i][j-2].value)*FXvec[j-1];
+	   }
+	}
+	if(wallname=="South"){
+	   for(unsigned int i=1;i<vec[0].size()-1;i++){
+	     unsigned int j=0;
+	     vec[i][j].value=vec[i][j+1].value+(vec[i][j+1].value-vec[i][j+2].value)*FXvec[j+1];
+	   }
+	}
 }
 
