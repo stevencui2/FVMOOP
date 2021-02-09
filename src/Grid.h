@@ -24,7 +24,8 @@ class Grid{
 		void setFY(vector<double>&,vector<double>&,vector<double>&);
 
 		double retdx() {return dx; };
-
+		int pNI() {return NI;};
+		int pNJ() {return NJ;};
 
 	private:
 		int N,M,NI,NJ,NIM,NJM;

@@ -3,7 +3,7 @@
 #include "forAllOperations.h"
 #include "Grid.h"
 #include "Solution.h"
-#include "string"
+#include <string>
 
 class Fields{
 
@@ -12,7 +12,20 @@ class Fields{
 	virtual ~Fields();
 
 	typedef vector<Fields> vec1dfields;
-	typedef vector<vector<vec1dfields>> vectorfields;
+	typedef vector<vec1dfields> vectorfields;
+
+	void getGridInfoPassed(Fields::vectorfields&, Grid&, Solution&);
+	void setVectorFieldGridFeatures();
+	void initializeFields(Fields::vectorfields&,double);
+	void initializeInternalFields(Fields::vectorfields&,double);
+
+	void print2dmat(Fields::vectorfields&);
+	void copyInternalField(Fields::vectorfields&, Fields::vectorfields&);
+	//boundary conditions (1) -which modifieds the value of Fields (not matrices)
+	void inletboundaryCondition(Fields::vectorfields&, string&, double);
+	void linearextrapolateCondition(Fields::vectorfields&);
+	
+	
 
 	double value;
 	int NI,NJ,NIM,NJM;
@@ -21,13 +34,6 @@ class Fields{
 
 	
 	
-	void getGridInfoPassed(Fields::vectorfields&, Grid&, Solution&);
-	void setVectorFieldGridFeatures();
-	void copyInternalField(Fields::vectorfields&, Fields::vectorfields&);
-	void initalizeFields(Fields::vectorfields&,double&);
-	//boundary conditions (1) -which modifieds the value of Fields (not matrices)
-	void inletboundaryCondition(Fields::vectorfields&, string&, double&);
-	void linearextrapolateCondition(Fields::vectorfields&);
 
 };
 

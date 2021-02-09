@@ -15,4 +15,4 @@ Fields.o: Fields.cpp Fields.h
 Solution.o: Solution.cpp Solution.h
 	$(CC) $(CFLAGS) Solution.cpp Solution.h
 clean:
-	rm -rf *.o FVM
+	rm -rf *.o *.gch FVM
