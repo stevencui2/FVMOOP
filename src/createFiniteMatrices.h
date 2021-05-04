@@ -1,3 +1,5 @@
+FiniteMatrix finiteobj;
+
 FiniteMatrix::finiteMat AE(NI,vector<FiniteMatrix>(NJ));
 FiniteMatrix::finiteMat AW(NI,vector<FiniteMatrix>(NJ));
 FiniteMatrix::finiteMat AS(NI,vector<FiniteMatrix>(NJ));
