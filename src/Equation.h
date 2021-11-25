@@ -6,24 +6,24 @@
 #include "Grid.h"
 #include "Fields.h"
 #include "FiniteMatrix.h"
+#include <cmath>
 
-
-
-class Equation {
+class Equation
+{
 public:
-  Equation(const FiniteMatrix::finiteMat&);
+  Equation(const FiniteMatrix::finiteMat &);
   virtual ~Equation();
 
   typedef vector<FiniteMatrix> svector1d;
   typedef FiniteMatrix::finiteMat svector;
 
-  void relax(Fields::vectorfields&);
+  void relax(Fields::vectorfields &);
   void resetEqn();
-  void noWallShearXBoundaryCondition(Fields::vectorfields&);
-  void noWallShearYBoundaryCondition(Fields::vectorfields&);
+  void noWallShearXBoundaryCondition(Fields::vectorfields &);
+  void noWallShearYBoundaryCondition(Fields::vectorfields &);
   void assembleEquation();
 
-  Fields::vectorfields solve(Fields::vectorfields&, FiniteMatrix::finiteMat&, Solution&, int);
+  Fields::vectorfields solve(Fields::vectorfields &, FiniteMatrix::finiteMat &, Solution &, int&);
 
   double value;
   double Residual;
@@ -43,12 +43,12 @@ public:
   FiniteMatrix::finiteMat rAP;
   FiniteMatrix::finiteMat APU;
   FiniteMatrix::finiteMat sourceInitial;
+  FiniteMatrix::finiteMat sourceB;
   FiniteMatrix::finiteMat sourceRelaxed;
   FiniteMatrix::finiteMat sourceFinial;
 
 private:
-  int NI,NJ,NIM,NJM,Literation;
-  svector UE,UN,LW,LS,LPR,RES;
-
+  int NI, NJ, NIM, NJM, Literation;
+  svector UE, UN, LW, LS, LPR, RES;
 };
 #endif

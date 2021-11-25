@@ -36,5 +36,9 @@ string south="South";
 
 fieldsOper.inletboundaryCondition(U,east,0.0);
 fieldsOper.inletboundaryCondition(U,west,0.0);
-fieldsOper.inletboundaryCondition(U,north,1.0);
+fieldsOper.inletboundaryCondition(U,north,0.0);
 fieldsOper.inletboundaryCondition(U,south,0.0);
+
+
+
+

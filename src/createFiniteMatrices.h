@@ -7,5 +7,5 @@ FiniteMatrix::finiteMat AN(NI,vector<FiniteMatrix>(NJ));
 FiniteMatrix::finiteMat AP(NI,vector<FiniteMatrix>(NJ));
 FiniteMatrix::finiteMat SU(NI,vector<FiniteMatrix>(NJ));
 FiniteMatrix::finiteMat SV(NI,vector<FiniteMatrix>(NJ));
-FiniteMatrix::finiteMat APU(NI,vector<FiniteMatrix>(NJ));
-FiniteMatrix::finiteMat APV(NI,vector<FiniteMatrix>(NJ));
+FiniteMatrix::finiteMat RAPU(NI,vector<FiniteMatrix>(NJ));
+FiniteMatrix::finiteMat RAPV(NI,vector<FiniteMatrix>(NJ));

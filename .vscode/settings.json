@@ -1,0 +1,18 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "${workspaceFolder}/",
+            "binaryPath": "/home/unix/FVMOPP/build/FVMOPP",
+            "binaryArgs": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/",
+            "stopAtEntry": false,
+            "symbolSearchPath": ""
+        },
+    ],
+    "files.associations": {
+        "*.tcc": "cpp"
+    }
+}
