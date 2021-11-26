@@ -141,3 +141,87 @@ void Fields::linearextrapolateCondition(Fields::vectorfields &vec, vector<double
 		}
 	}
 }
+void Fields::computeCellCenterPressureGrad(Fields::vectorfields &vec, Fields::vectorfields &dvecx, Fields::vectorfields &dvecy)
+{
+	forAllInternal(vec)
+	{
+		double DX = vec[i][j].X - vec[i - 1][j].X;
+		double DY = vec[i][j].Y - vec[i][j - 1].Y;
+
+		// calculate interpolated face pressure
+		double pressureEastFace = (vec[i + 1][j].value * vec[i][j].FXE) + (vec[i][j].value * vec[i][j].FXP);
+		double pressureWestFace = (vec[i][j].value * vec[i - 1][j].FXE) + (vec[i - 1][j].value * vec[i - 1][j].FXP);
+		double pressureNorthFace = (vec[i][j + 1].value * vec[i][j].FYN) + (vec[i][j].value * vec[i][j].FYP);
+		double pressureSouthFace = (vec[i][j].value * vec[i][j - 1].FYN) + (vec[i][j - 1].value * vec[i][j - 1].FYP);
+
+		double pressureEastGrad = (pressureEastFace - pressureWestFace) / DX;
+		double pressureNorthGrad = (pressureNorthFace - pressureSouthFace) / DY;
+		dvecx[i][j].value = pressureEastGrad;
+		dvecy[i][j].value = pressureNorthGrad;
+	}
+}
+Fields::vectorfields Fields::interpolatedFieldEast(Fields::vectorfields &vec, Grid &myGrid_)
+{
+	Fields::vectorfields temp(vec.size(), vector<Fields>(vec[0].size()));
+	forAllInternalUCVs(vec)
+	{
+		double FXE = myGrid_.FX[i];
+		double FXP = 1.0 - FXE;
+
+		temp[i][j].value = (vec[i + 1][j].value * FXE) + (vec[i][j].value * FXP);
+	}
+	return temp;
+}
+Fields::vectorfields Fields::interpolatedFieldNorth(Fields::vectorfields &vec, Grid &myGrid_)
+{
+	Fields::vectorfields temp(vec.size(), vector<Fields>(vec[0].size()));
+	forAllInternalVCVs(vec)
+	{
+		double FYN = myGrid_.FY[j];
+		double FYP = 1.0 - FYN;
+
+		temp[i][j].value = (vec[i][j + 1].value * FYN) + (vec[i][j].value * FYP);
+	}
+	return temp;
+}
+Fields::vectorfields Fields::cellFaceGradientEast(Fields::vectorfields &vec, Grid &myGrid_)
+{
+	Fields::vectorfields temp(vec.size(), vector<Fields>(vec[0].size()));
+	forAllInternalUCVs(vec)
+	{
+		double DXPE = (myGrid_.XC[i + 1] - myGrid_.XC[i]);
+		temp[i][j].value = (vec[i + 1][j].value - vec[i][j].value) / DXPE;
+	}
+	return temp;
+}
+
+Fields::vectorfields Fields::cellFaceGradientNorth(Fields::vectorfields &vec, Grid &myGrid_)
+{
+	Fields::vectorfields temp(vec.size(), vector<Fields>(vec[0].size()));
+	forAllInternalVCVs(vec)
+	{
+		double DYPN = (myGrid_.XC[j + 1] - myGrid_.XC[j]);
+		temp[i][j].value = (vec[i][j + 1].value - vec[i][j].value) / DYPN;
+	}
+	return temp;
+}
+
+void Fields::computeEastMassFluxes(Fields::vectorfields &vec, Fields::vectorfields &corrU)
+{
+	forAllInternalUCVs(vec)
+	{
+		double sArea = vec[i][j].Se;
+		double density = vec[i][j].density;
+		vec[i][j].value = sArea * density * corrU[i][j].value;
+	}
+}
+
+void Fields::computeNorthMassFluxes(Fields::vectorfields &vec, Fields::vectorfields &corrV)
+{
+	forAllInternalVCVs(vec)
+	{
+		double sArea = vec[i][j].Sn;
+		double density = vec[i][j].density;
+		vec[i][j].value = sArea * density * corrV[i][j].value;
+	}
+}

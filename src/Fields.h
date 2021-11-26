@@ -27,6 +27,22 @@ public:
 	void inletboundaryCondition(Fields::vectorfields &, string &, double);
 	void linearextrapolateCondition(Fields::vectorfields &, vector<double> &, vector<double> &, string &);
 
+//1
+	void computeCellCenterPressureGrad(Fields::vectorfields&, Fields::vectorfields&,Fields::vectorfields&);
+//2
+	Fields::vectorfields interpolatedFieldEast(Fields::vectorfields&, Grid&);
+	Fields::vectorfields interpolatedFieldNorth(Fields::vectorfields&, Grid&);
+
+	//3 cell face gradient
+	Fields::vectorfields cellFaceGradientEast(Fields::vectorfields&, Grid&);
+	Fields::vectorfields cellFaceGradientNorth(Fields::vectorfields&, Grid&);
+
+	//4 - compute mass flux
+	void computeEastMassFluxes(Fields::vectorfields&, Fields::vectorfields&);
+	void computeNorthMassFluxes(Fields::vectorfields&, Fields::vectorfields&);
+
+
+
 	double value;
 	int NI, NJ, NIM, NJM;
 	double X, XC, Y, YC, FXE, FXP, FYN, FYP, DXPtoE, DYPtoN;

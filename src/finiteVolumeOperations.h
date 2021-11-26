@@ -98,6 +98,34 @@ namespace fvm
     }
     return APtemp;
   } // end pressureGrad
+
+  // pressure poisson equation
+  FiniteMatrix::finiteMat HTerm(const FiniteMatrix::finiteMat &RAPU, const FiniteMatrix::finiteMat &RAPV, Fields::vectorfields &vec, Fields::vectorfields vec2)
+  {
+    FiniteMatrix::finiteMat APtemp(vec.size(), vector<FiniteMatrix>(vec[0].size()));
+    // towards to east side
+    forAllInternalUCVs(APtemp)
+    {
+      APtemp[i][j].aevalue = -vec[i][j].density * vec[i][j].Se * RAPU[i][j].value * vec2[i][j].Se;
+      APtemp[i + 1][j].awvalue = -vec[i][j].density * vec[i][j].Se * RAPU[i][j].value * vec2[i][j].Se;
+    }
+    // towards to north side
+    forAllInternalVCVs(APtemp)
+    {
+      APtemp[i][j].anvalue = -vec[i][j].density * vec[i][j].Sn * RAPV[i][j].value * vec2[i][j].Sn;
+      APtemp[i][j + 1].asvalue = -vec[i][j].density * vec[i][j].Sn * RAPV[i][j].value * vec2[i][j].Sn;
+    }
+    return APtemp;
+  } // end HTerm
+  FiniteMatrix::finiteMat divPhi(const Fields::vectorfields &Feast, const Fields::vectorfields &Fnorth)
+  {
+    FiniteMatrix::finiteMat APtemp(Feast.size(), vector<FiniteMatrix>(Feast[0].size()));
+    forAllInternalUCVs(APtemp)
+    {
+      APtemp[i][j].value = Feast[i - 1][j].value - Feast[i][j].value + Fnorth[i][j - 1].value - Fnorth[i][j].value;
+    }
+    return APtemp;
+  }
 } // end namespace fvm
 
 #endif

@@ -120,7 +120,7 @@ Fields::vectorfields Equation::solve(Fields::vectorfields &phi, FiniteMatrix::fi
       LW[i][j].value = AW[i][j].value / (1.0 + (sol.Alfa * UN[i - 1][j].value));
       LS[i][j].value = AS[i][j].value / (1.0 + (sol.Alfa * UN[i][j - 1].value));
       double P1 = sol.Alfa * LW[i][j].value * UN[i - 1][j].value;
-      double P2 = sol.Alfa * LS[i][j].value * UE[i - 1][j].value;
+      double P2 = sol.Alfa * LS[i][j].value * UE[i][j-1].value;
       LPR[i][j].value = 1.0 / (AP[i][j].value + P1 + P2 - LW[i][j].value * UE[i - 1][j].value - LS[i][j].value * UN[i][j - 1].value);
       UN[i][j].value = (AN[i][j].value - P1) * LPR[i][j].value;
       UE[i][j].value = (AE[i][j].value - P2) * LPR[i][j].value;
