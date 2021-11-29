@@ -108,26 +108,25 @@ void Equation::relax(Fields::vectorfields &vec)
   }
 }
 // strongly implicit solver (SIP)
-Fields::vectorfields Equation::solve(Fields::vectorfields &phi, FiniteMatrix::finiteMat &sourceinput, Solution &sol, int &iterations)
-{
+Fields::vectorfields Equation::solve(Fields::vectorfields &phi, FiniteMatrix::finiteMat &source1, Solution &sol_, int &iterations){
   Fields::vectorfields phitemp(phi.size(), vector<Fields>(phi[0].size()));
-  // coefficient of Upper and Lower trangulation matrices
 
+  //..COEFFICIENTS OF UPPER AND LOWER TRIANGULAR MATRICES
   for (unsigned int i = 1; i < phi.size() - 1; i++)
   {
     for (unsigned int j = 1; j < phi[i].size() - 1; j++)
     {
-      LW[i][j].value = AW[i][j].value / (1.0 + (sol.Alfa * UN[i - 1][j].value));
-      LS[i][j].value = AS[i][j].value / (1.0 + (sol.Alfa * UN[i][j - 1].value));
-      double P1 = sol.Alfa * LW[i][j].value * UN[i - 1][j].value;
-      double P2 = sol.Alfa * LS[i][j].value * UE[i][j-1].value;
+      LW[i][j].value = AW[i][j].value / (1.0 + (sol_.Alfa * UN[i - 1][j].value));
+      LS[i][j].value = AS[i][j].value / (1.0 + (sol_.Alfa * UE[i][j - 1].value));
+      double P1 = sol_.Alfa * LW[i][j].value * UN[i - 1][j].value;
+      double P2 = sol_.Alfa * LS[i][j].value * UE[i][j - 1].value;
       LPR[i][j].value = 1.0 / (AP[i][j].value + P1 + P2 - LW[i][j].value * UE[i - 1][j].value - LS[i][j].value * UN[i][j - 1].value);
       UN[i][j].value = (AN[i][j].value - P1) * LPR[i][j].value;
       UE[i][j].value = (AE[i][j].value - P2) * LPR[i][j].value;
     }
   }
 
-  // calculate residual and overwriting with an intermediate error
+  //.....CALCULATE RESIDUAL AND OVERWRITE IT BY INTERMEDIATE VECTOR
   for (int L = 0; L < iterations; L++)
   {
     Residual = 0.0;
@@ -136,28 +135,36 @@ Fields::vectorfields Equation::solve(Fields::vectorfields &phi, FiniteMatrix::fi
     {
       for (unsigned int j = 1; j < phi[i].size() - 1; j++)
       {
-        RES[i][j].value = sourceinput[i][j].value - (AN[i][j].value * phi[i][j + 1].value) - (AS[i][j].value * phi[i][j - 1].value) - (AE[i][j].value * phi[i + 1][j].value) - (AW[i][j].value * phi[i - 1][j].value) - AP[i][j].value * phi[i][j].value;
+        RES[i][j].value = source1[i][j].value - (AN[i][j].value * phi[i][j + 1].value) - (AS[i][j].value * phi[i][j - 1].value) -
+                          (AE[i][j].value * phi[i + 1][j].value) - (AW[i][j].value * phi[i - 1][j].value) - (AP[i][j].value * phi[i][j].value);
+
         Residual += abs(RES[i][j].value);
         RES[i][j].value = (RES[i][j].value - (LS[i][j].value * RES[i][j - 1].value) - (LW[i][j].value * RES[i - 1][j].value)) * LPR[i][j].value;
+        //    cout << std::setprecision(3)  << RES[i][j].value << ' ';
       }
     }
+
     double small = 1e-20;
     if (L == 0)
     {
       RESOR = Residual;
     }
     RSM = Residual / (RESOR + small);
-    cout << EqnName << " Inner It " << L << " and Residual -->" << Residual << " RSM " << RSM << endl;
-    // Back substution and Correction
+
+    cout << EqnName << " Inner It: " << L << " and Residual --> " << Residual << " RSM " << RSM << endl;
+
+    // Back Subsitution and Correction
     for (unsigned int i = phi.size() - 2; i >= 1; --i)
     {
       for (unsigned int j = phi[i].size() - 2; j >= 1; --j)
       {
+
         RES[i][j].value = RES[i][j].value - (UN[i][j].value * RES[i][j + 1].value) - (UE[i][j].value * RES[i + 1][j].value);
         phi[i][j].value = phi[i][j].value + RES[i][j].value;
       }
     }
-  } // end iteration loop
+  }
+
   forAll(phitemp)
   {
     phitemp[i][j].value = phi[i][j].value;

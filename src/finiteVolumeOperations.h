@@ -120,7 +120,7 @@ namespace fvm
   FiniteMatrix::finiteMat divPhi(const Fields::vectorfields &Feast, const Fields::vectorfields &Fnorth)
   {
     FiniteMatrix::finiteMat APtemp(Feast.size(), vector<FiniteMatrix>(Feast[0].size()));
-    forAllInternalUCVs(APtemp)
+    forAllInternal(APtemp)
     {
       APtemp[i][j].svalue = Feast[i - 1][j].value - Feast[i][j].value + Fnorth[i][j - 1].value - Fnorth[i][j].value;
     }
