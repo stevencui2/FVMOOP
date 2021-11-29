@@ -200,7 +200,7 @@ Fields::vectorfields Fields::cellFaceGradientNorth(Fields::vectorfields &vec, Gr
 	Fields::vectorfields temp(vec.size(), vector<Fields>(vec[0].size()));
 	forAllInternalVCVs(vec)
 	{
-		double DYPN = (myGrid_.XC[j + 1] - myGrid_.XC[j]);
+		double DYPN = (myGrid_.YC[j + 1] - myGrid_.YC[j]);
 		temp[i][j].value = (vec[i][j + 1].value - vec[i][j].value) / DYPN;
 	}
 	return temp;

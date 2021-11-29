@@ -52,10 +52,14 @@ int main(int argc, char **argv)
 		VEqn->relax(V);
 
 		FiniteMatrix::finiteMat SV(VEqn->sourceRelaxed);
-		int Viter = 1; VEqn->EqnName="V-momentum";
+		int Viter = 1;
+		VEqn->EqnName = "V-momentum";
 		Fields::vectorfields Vtemp = VEqn->solve(V, SV, sol, Viter);
 		fieldsOper.copyInternalField(Vtemp, V);
 		RAPV = VEqn->rAP;
+
+
+		
 		// 1 - DPX,DPY
 		// 2 - field, U, V, or P, interpolate East North
 		// 3 - Compute Mass FLuxes(MassFE, massFN);
@@ -81,19 +85,50 @@ int main(int argc, char **argv)
 		Equation *PEqn = new Equation(
 			fvm::HTerm(RAPUPtoE, RAPVPtoN, U, V) + fvm::divPhi(massFluxE, massFluxN));
 		PEqn->assembleEquation();
-		double zero=0.0;
-		forAllInternal(PP){
-			PP[i][j].value=0.0;
+		double zero = 0.0;
+		forAllInternal(PP)
+		{
+			PP[i][j].value = 0.0;
 		}
 		FiniteMatrix::finiteMat SP(PEqn->sourceFinial);
-		int Piter=6;PEqn->EqnName="P-Eqn";
-		PEqn->URF=0.2;
+		int Piter = 6;
+		PEqn->EqnName = "P-Eqn";
+		PEqn->URF = 0.2;
 		FiniteMatrix::finiteMat PAE(PEqn->AE);
 		FiniteMatrix::finiteMat PAN(PEqn->AN);
-		PP=PEqn->solve(PP,SP,sol,Piter);
+		PP = PEqn->solve(PP, SP, sol, Piter);
 
+		fieldsOper.linearextrapolateCondition(PP, mygrid_.FX, mygrid_.FY, north);
+		fieldsOper.linearextrapolateCondition(PP, mygrid_.FX, mygrid_.FY, south);
+		fieldsOper.linearextrapolateCondition(PP, mygrid_.FX, mygrid_.FY, east);
+		fieldsOper.linearextrapolateCondition(PP, mygrid_.FX, mygrid_.FY, west);
 
+		// reference location to obtain pressure
+		int IPR = 4;
+		int JPR = 4;
+		double PPO = PP[IPR][JPR].value;
+		cout << "pressure PP at ref location 4,4 = " << PPO << endl;
+		finiteobj.correctEastMassFluxes(massFluxE, PP, PAE);
+		finiteobj.correctNorthMassFluxes(massFluxN, PP, PAN);
 
+		// finial correct U V and pressure
+		forAllInternal(U)
+		{
+			double DX = mygrid_.X[i] - mygrid_.X[i - 1];
+			double DY = mygrid_.Y[j] - mygrid_.Y[j - 1];
+
+			double pressureEastFace = (PP[i + 1][j].value * PP[i][j].FXE) + (PP[i][j].value * PP[i][j].FXP);
+			double pressureWestFace = (PP[i][j].value * PP[i - 1][j].FXE) + (PP[i - 1][j].value * PP[i - 1][j].FXP);
+			double pressureNorthFace = (PP[i][j + 1].value * PP[i][j].FYN) + (PP[i][j].value * PP[i][j].FYP);
+			double pressureSouthFace = (PP[i][j].value * PP[i][j - 1].FYN) + (PP[i][j - 1].value * PP[i][j - 1].FYP);
+
+			double URF_P = 0.2;
+
+			// U V P
+			U[i][j].value = U[i][j].value - (pressureEastFace - pressureWestFace) * DY * RAPU[i][j].value;
+			V[i][j].value = V[i][j].value - (pressureNorthFace - pressureSouthFace) * DX * RAPV[i][j].value;
+			P[i][j].value = P[i][j].value + URF_P * (PP[i][j].value - PPO);
+		}
 
 		// pressure -poisson RAPU and RAPV
 	}

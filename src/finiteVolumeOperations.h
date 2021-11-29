@@ -106,14 +106,14 @@ namespace fvm
     // towards to east side
     forAllInternalUCVs(APtemp)
     {
-      APtemp[i][j].aevalue = -vec[i][j].density * vec[i][j].Se * RAPU[i][j].value * vec2[i][j].Se;
-      APtemp[i + 1][j].awvalue = -vec[i][j].density * vec[i][j].Se * RAPU[i][j].value * vec2[i][j].Se;
+      APtemp[i][j].aevalue = -vec[i][j].density * vec[i][j].Se * RAPU[i][j].value * vec[i][j].Se;
+      APtemp[i + 1][j].awvalue = -vec[i][j].density * vec[i][j].Se * RAPU[i][j].value * vec[i][j].Se;
     }
     // towards to north side
     forAllInternalVCVs(APtemp)
     {
-      APtemp[i][j].anvalue = -vec[i][j].density * vec[i][j].Sn * RAPV[i][j].value * vec2[i][j].Sn;
-      APtemp[i][j + 1].asvalue = -vec[i][j].density * vec[i][j].Sn * RAPV[i][j].value * vec2[i][j].Sn;
+      APtemp[i][j].anvalue = -vec2[i][j].density * vec2[i][j].Sn * RAPV[i][j].value * vec2[i][j].Sn;
+      APtemp[i][j + 1].asvalue = -vec2[i][j].density * vec2[i][j].Sn * RAPV[i][j].value * vec2[i][j].Sn;
     }
     return APtemp;
   } // end HTerm
@@ -122,7 +122,7 @@ namespace fvm
     FiniteMatrix::finiteMat APtemp(Feast.size(), vector<FiniteMatrix>(Feast[0].size()));
     forAllInternalUCVs(APtemp)
     {
-      APtemp[i][j].value = Feast[i - 1][j].value - Feast[i][j].value + Fnorth[i][j - 1].value - Fnorth[i][j].value;
+      APtemp[i][j].svalue = Feast[i - 1][j].value - Feast[i][j].value + Fnorth[i][j - 1].value - Fnorth[i][j].value;
     }
     return APtemp;
   }
