@@ -107,7 +107,7 @@ void Equation::relax(Fields::vectorfields &vec)
     rAP[i][j].value = 1.0 / AP[i][j].value;
   }
 }
-// strongly implicit solver (SIP)
+// strongly implicit solver (SIP) will be replace by author's parallel AMG solver soon
 Fields::vectorfields Equation::solve(Fields::vectorfields &phi, FiniteMatrix::finiteMat &source1, Solution &sol_, int &iterations){
   Fields::vectorfields phitemp(phi.size(), vector<Fields>(phi[0].size()));
 

@@ -65,20 +65,24 @@ int main(int argc, char **argv)
 		// 3 - Compute Mass FLuxes(MassFE, massFN);
 		// 4 - interpolate RAPU and RAPV
 		// 5 - correct mass fluxs
+		// grad P cell center
 		fieldsOper.computeCellCenterPressureGrad(P, DPX, DPY);
-		Fields::vectorfields PgradPtoE(fieldsOper.interpolatedFieldEast(DPX, mygrid_));
-		Fields::vectorfields PgradPtoN(fieldsOper.interpolatedFieldNorth(DPY, mygrid_));
+		//grad p at cell face contributed for sum of face  gradPf_avg
+		Fields::vectorfields gradPeAvg(fieldsOper.interpolatedFieldEast(DPX, mygrid_));
+		Fields::vectorfields gradPnAvg(fieldsOper.interpolatedFieldNorth(DPY, mygrid_));
+		// velocity at cell face 
 		Fields::vectorfields UVelPtoE(fieldsOper.interpolatedFieldEast(U, mygrid_));
 		Fields::vectorfields VVelPtoN(fieldsOper.interpolatedFieldNorth(V, mygrid_));
+
 		FiniteMatrix::finiteMat RAPUPtoE(finiteobj.interpolatedFieldEast(RAPU, mygrid_));
 		FiniteMatrix::finiteMat RAPVPtoN(finiteobj.interpolatedFieldNorth(RAPV, mygrid_));
 
-		// cell face pressure gradient
-		Fields::vectorfields cellFaceEastPressureGrad(fieldsOper.cellFaceGradientEast(P, mygrid_));
-		Fields::vectorfields cellFaceNorthPressureGrad(fieldsOper.cellFaceGradientNorth(P, mygrid_));
+		// cell face pressure gradient contributed from PP and PF gradPf
+		Fields::vectorfields gradPe(fieldsOper.cellFaceGradientEast(P, mygrid_));
+		Fields::vectorfields gradPn(fieldsOper.cellFaceGradientNorth(P, mygrid_));
 		// correct face velocities
-		Fields::vectorfields UE(finiteobj.correctFaceVelocityEast(UVelPtoE, cellFaceEastPressureGrad, PgradPtoE, RAPUPtoE, mygrid_));
-		Fields::vectorfields VN(finiteobj.correctFaceVelocityNorth(VVelPtoN, cellFaceNorthPressureGrad, PgradPtoN, RAPVPtoN, mygrid_));
+		Fields::vectorfields UE(finiteobj.correctFaceVelocityEast(UVelPtoE, gradPe, gradPeAvg, RAPUPtoE, mygrid_));
+		Fields::vectorfields VN(finiteobj.correctFaceVelocityNorth(VVelPtoN, gradPn, gradPnAvg, RAPVPtoN, mygrid_));
 		fieldsOper.computeEastMassFluxes(massFluxE, UE);
 		fieldsOper.computeNorthMassFluxes(massFluxN, VN);
 

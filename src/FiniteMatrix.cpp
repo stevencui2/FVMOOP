@@ -138,7 +138,7 @@ Fields::vectorfields FiniteMatrix::correctFaceVelocityNorth(Fields::vectorfields
     double DYPN = (myGrid_.YC[j + 1] - myGrid_.XC[j]);
     double sArea = myGrid_.X[i] - myGrid_.X[i - 1];
     double volume = DYPN * sArea;
-
+          // uf =uf_avg -Duf_avg*(gradPf-gradPf_avg) Rhie-Chow Interpolation
     temp[i][j].value = interpolatedCellFaceVelocity[i][j].value - (APinterpolated[i][j].value * volume * (cellFacePressureGradient[i][j].value - DPYField[i][j].value));
   }
   return temp;

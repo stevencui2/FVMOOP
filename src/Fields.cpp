@@ -149,6 +149,8 @@ void Fields::computeCellCenterPressureGrad(Fields::vectorfields &vec, Fields::ve
 		double DY = vec[i][j].Y - vec[i][j - 1].Y;
 
 		// calculate interpolated face pressure
+		
+		//?double pressureEastFace = (vec[i + 1][j].value * vec[i][j].FXP) + (vec[i][j].value * vec[i][j].FXE);?
 		double pressureEastFace = (vec[i + 1][j].value * vec[i][j].FXE) + (vec[i][j].value * vec[i][j].FXP);
 		double pressureWestFace = (vec[i][j].value * vec[i - 1][j].FXE) + (vec[i - 1][j].value * vec[i - 1][j].FXP);
 		double pressureNorthFace = (vec[i][j + 1].value * vec[i][j].FYN) + (vec[i][j].value * vec[i][j].FYP);
